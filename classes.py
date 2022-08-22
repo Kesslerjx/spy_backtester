@@ -1,3 +1,4 @@
+import math
 
 class Interval:
     def __init__(self, date, time, open, high, low, close) -> None:
@@ -23,26 +24,58 @@ class Day:
         self.date = ''
         self.intervals = []
 
+class Contract:
+    def __init__(self, date, spot, option, trend, amount, risk, reward) -> None:
+        self.date   = date
+        self.spot   = spot
+        self.option = option
+        self.trend  = trend
+        self.amount = amount
+        self.risk   = risk
+        self.reward = reward
+        self.ask    = option['ask']
+        self.bid    = option['bid']
+        self.delta  = option['delta']
+        self.theta  = option['theta']
+        self.price  = float(self.ask) * float(100) * float(amount)
+        self.value  = self.bid * 100
+
+        self.take_profit = self.ask + (reward/100)
+        self.stop_loss   = self.ask - (risk/100)
+
+        self.set_tp_sl_amounts()
+
+    def theta_decay(self):
+        self.ask = self.ask + self.theta
+        self.bid = self.bid + self.theta
+
+    def delta_change(self, stock_price):
+        price_change  = stock_price - self.spot
+        change_amount = price_change * abs(self.delta)
+
+        self.ask   = self.ask + (change_amount * self.trend)
+        self.bid   = self.bid + (change_amount * self.trend)
+        self.value = self.bid * 100
+    
+    def set_tp_sl_amounts(self):
+        bid_change_tp = self.take_profit - self.bid
+        bid_change_sl = self.bid - self.stop_loss
+        tp_dollar_change = bid_change_tp / self.delta
+        sl_dollar_change = bid_change_sl / self.delta 
+
+        if self.trend > 0:
+            self.take_profit_amount = self.spot + abs(tp_dollar_change)
+            self.stop_loss_amount   = self.spot - abs(sl_dollar_change)
+        else:
+            self.take_profit_amount = self.spot - abs(tp_dollar_change)
+            self.stop_loss_amount   = self.spot + abs(sl_dollar_change)
+        
+
+    def get_contract_value_tp(self):
+        return (self.take_profit - self.ask) * 100
 
 class Result:
-    def __init__(self, win, change, balance, date, interval, takeProfit, stopLoss) -> None:
-        self.win        = win
-        self.change     = change
-        self.balance    = balance
-        self.date       = date
-        self.interval   = interval
-        self.takeProfit = takeProfit
-        self.stopLoss   = stopLoss
-
-    def show_result(self):
-        print('')
-        print(self.date)
-        if self.win: print('Win')
-        else: print('Lose')
-        print('End Balance: ' + str(self.balance))
-        print('Open: ' + str(self.interval.open))
-        print('High: ' + str(self.interval.high))
-        print('Low: ' + str(self.interval.low))
-        print('Take Profit: ' + str(self.takeProfit))
-        print('Stop Loss: ' + str(self.stopLoss))
-        print('')
+    def __init__(self, balance, contract, trend) -> None:
+        self.balance  = balance
+        self.contract = contract
+        self.trend    = trend
