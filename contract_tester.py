@@ -12,12 +12,12 @@ OPTIONS    = get_dict('./data/spy_options_data.json')  # Historical options for 
 
 # Strategy Variables
 TREND_DAYS      = 4 # Minimum amount of days to look back for a trend
-DELTA_MINIMUM   = 0.10 # Get contracts with this minimum delta
-OPTION_EXP_DAYS = 1 # Minimum num of days the option expires
+DELTA_MINIMUM   = 0.55 # Get contracts with this minimum delta
+OPTION_EXP_DAYS = 4 # Minimum num of days the option expires
 STRIKE_DIFF     = 1 # Get contract with this much away from current price ITM
 NUM_CONTRACTS   = 1 # Number of contracts to buy at a time
-RISK_AMOUNT     = 50.0 # Dollar amount to risk
-REWARD_AMOUT    = 100.0 # Dollar amount to win
+RISK_AMOUNT     = 41.0 # Dollar amount to risk
+REWARD_AMOUT    = 77.0 # Dollar amount to win
 
 balances = []
 
