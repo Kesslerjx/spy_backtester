@@ -11,6 +11,10 @@ ITM_KEY        = 'inTheMoney'
 STRIKE_KEY     = 'strike'
 DELTA_KEY      = 'delta'
 
+# Pulls the data values from the options dictionary
+def get_data(options):
+    return options[DATA_KEY]
+
 # Gets options that have an expiration of the requested date
 # Stop if options are found or if there is nothing else to check
 def get_options_by_date(date: str, options_dict, options=[], count=0):

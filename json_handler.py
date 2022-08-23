@@ -22,6 +22,9 @@ def get_dict(path):
     
     return data
 
-save_json(get_json(API_CALL), FILE_PATH)
+# Update API_CALL
+# Remove comment below
+# Run file
+#save_json(get_json(API_CALL), FILE_PATH)
 
 
