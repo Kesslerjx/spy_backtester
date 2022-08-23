@@ -9,6 +9,16 @@ class Interval:
         self.low   = low
         self.close = close
 
+class DailyDay:
+    def __init__(self, date, open, high, low, close, adjusted, volume) -> None:
+        self.date     = date
+        self.open     = open
+        self.high     = high
+        self.low      = low
+        self.close    = close
+        self.adjusted = adjusted
+        self.volume   = volume
+
 class Day:
     def __init__(self, date, intervals) -> None:
         self.date      = date

@@ -1,8 +1,9 @@
 import requests
 import json
 
-API_CALL  = 'https://eodhistoricaldata.com/api/options/SPY.US?api_token=62fe673465ec30.58512842&from=2022-04-21'
-FILE_PATH = './data/spy_options_data.json'
+API_KEY   = 'Key here'
+API_CALL  = 'https://eodhistoricaldata.com/api/options/SPY.US?api_token='+API_KEY+'&from=2021-01-01'
+FILE_PATH = './data/spy_options_since_2021.json'
 
 def get_json(call):
     response   = requests.get(API_CALL)
@@ -21,5 +22,6 @@ def get_dict(path):
     
     return data
 
+save_json(get_json(API_CALL), FILE_PATH)
 
 

@@ -1,5 +1,17 @@
 import csv
-from classes import Interval, Day
+from classes import Interval, Day, DailyDay
+
+def get_days_daily(path):
+    days =[]
+
+    with open(path, 'r') as infile:
+        reader = csv.reader(infile)
+        header = next(reader)
+
+        for row in reader:
+            days.append(DailyDay(row[0], row[1], row[2], row[3], row[4], row[5], row[6]))
+
+    return days
 
 def get_days(path):
 
@@ -14,6 +26,8 @@ def get_days(path):
         
         # Loop through entries in CSV File
         for row in reader:
+
+            print(type(row))
             # Get time
             time = row[1]
 
