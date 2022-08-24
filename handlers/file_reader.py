@@ -1,5 +1,9 @@
 import csv
-from classes import Interval, Day, DailyDay
+import sys
+
+sys.path.insert(0, '../classes')
+
+from .classes import Interval, Day, DailyDay
 
 def get_days_daily(path):
     days =[]
