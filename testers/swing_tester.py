@@ -1,7 +1,7 @@
-from file_reader import get_days_daily
-from json_handler import get_dict
-from options_handler import deltas_with_minimum, get_contracts_by_trend, get_data, get_daily_trend, get_options_at_expiration, remove_contracts_no_interest, remove_contracts_unaffordable
-from date_handler import add_days_to_date
+from handlers.file_reader import get_days_daily
+from handlers.json_handler import get_dict
+from handlers.options_handler import deltas_with_minimum, get_contracts_by_trend, get_data, get_daily_trend, get_options_at_expiration, remove_contracts_no_interest, remove_contracts_unaffordable
+from handlers.date_handler import add_days_to_date
 
 # Get the days from the CSV file
 # Get the options from the JSON file
