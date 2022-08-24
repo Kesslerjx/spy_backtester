@@ -1,5 +1,7 @@
 from datetime import date, datetime, timedelta
+from date_handler import add_days_to_date
 import math
+import random
 
 # KEYS
 DATA_KEY       = 'data'
@@ -7,9 +9,11 @@ EXPIRATION_KEY = 'expirationDate'
 OPTIONS_KEY    = 'options'
 CALLS_KEY      = 'CALL'
 PUTS_KEY       = 'PUT'
+ASK_KEY        = 'ask'
 ITM_KEY        = 'inTheMoney'
 STRIKE_KEY     = 'strike'
 DELTA_KEY      = 'delta'
+INTEREST_KEY   = 'openInterest'
 
 # Pulls the data values from the options dictionary
 def get_data(options):
@@ -103,13 +107,13 @@ def remove_zero_deltas(options):
 
 # Gets contracts from the option list with at least a certain number
 def deltas_with_minimum(decimal: float, options):
-    pruned = []
+    filtered = []
 
     for option in options:
         if abs(float(option[DELTA_KEY])) >= float(decimal):
-            pruned.append(option)
+            filtered.append(option)
 
-    return pruned
+    return filtered
 
 # Gets a contract at strike price from the list of options
 def get_contract_at_strike(price, diff, trend, options):
@@ -145,4 +149,63 @@ def find_trend(from_date: date, to_date: date, days):
         return 0
     else:
         return math.copysign(1, to_close - from_close)
-    
+
+# Returns 1 if up trend
+# Returns -1 if down trend
+# Returns 0 if no trend
+def get_daily_trend(from_day, to_day):
+    difference = to_day.close - from_day.close
+
+    if difference == 0:
+        return 0
+    else:
+        return math.copysign(1, difference)
+
+# Get options at a certain expiration date
+# Options must be a list and not a dictionary
+def get_options_at_expiration(exp_date, options, filtered=[], index=0, max=10):
+
+    if index == max:
+        return None
+    elif filtered == []:
+
+        for option in options:
+            if option[EXPIRATION_KEY] == exp_date:
+                filtered.append(option)
+
+        next_day = add_days_to_date(exp_date, 1)
+        return get_options_at_expiration(next_day, options, filtered, index+1)
+        
+    else:
+        return filtered[0][OPTIONS_KEY]
+
+# Return calls for 1
+# Return puts for -1
+# Recursively call itself with random value of either -1 or 1
+def get_contracts_by_trend(trend, contracts):
+    if trend == 1:
+        return contracts[CALLS_KEY]
+    elif trend == -1:
+        return contracts[PUTS_KEY]
+    else:
+        return get_contracts_by_trend(random.choice([-1,1]), contracts)
+
+# Removes any contract that doesn't have open interest
+def remove_contracts_no_interest(contracts):
+    filtered = []
+
+    for contract in contracts:
+        if contract[INTEREST_KEY] != None:
+            filtered.append(contract)
+
+    return filtered
+
+# Removes contracts that aren't affordable
+def remove_contracts_unaffordable(balance, contracts, amount=1):
+    filtered = []
+
+    for contract in contracts:
+        if float(contract[ASK_KEY]) * amount * 100 < balance:
+            filtered.append(contract)
+
+    return filtered
