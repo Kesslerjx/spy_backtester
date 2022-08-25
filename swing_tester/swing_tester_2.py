@@ -6,8 +6,16 @@ from datetime import datetime, timedelta
 
 # Returns true if a swing
 # Returns false if not
-def is_swing(current_candle, next_candle):
-    return copysign(1, current_candle) != copysign(1, next_candle)
+def is_swing(day, next_day):
+    # If the current day candle is red, then the next candle must be green and close above the current day
+    # If the current day candle is green, then the next candle must be red and close below the current day
+    # If not, then it's not a swing
+    if day.close - day.open < 0 and next_day.close - next_day.open > 0 and next_day.close > day.close:
+        return True
+    elif day.close - day.open > 0 and next_day.close - next_day.open < 0 and next_day.close < day.close:
+        return True
+    else:
+        return False
 
 def add_day(date: str, days=1):
     date_as_date = datetime.strptime(date, '%Y-%m-%d')
@@ -54,13 +62,15 @@ def print_forecast(forecast):
         print('    ' + date)
 
 # Gets the amount of contracts to buy
-# If the balance is 1000 or above, buy based on a percantage
-# If the balance is less, then buy what can be afforded
 def get_amount_to_buy(balance, cost):
-    if balance >= 1000:
-        return floor(balance * 0.001)
+
+    if cost > balance:
+        return 0
+    if balance < 4000:
+        return 1
     else:
-        return floor(balance/cost)
+        return floor(balance * 0.0005)
+
 
 # Get the days from the CSV file
 # Get holidays for forecasting purposes
@@ -73,7 +83,7 @@ start      = False
 s_balance  = 1000
 balance    = s_balance
 c_cost     = 400.0 # Estimated contract premium for 1, 2 days expiration ITM
-delta      = 0.30 # Estimated delta for a trade
+delta      = 0.5 # Estimated delta for a trade
 n_days     = 7 # Number of days to test for a swing
 count      = 0 # How many times its checked 
 correct    = 0 # How many times its write
@@ -88,7 +98,7 @@ for index, day in enumerate(DAYS):
 
         # Don't start counting until at least 1 swing has happened
         # Really just checking for a small direction change
-        if is_swing(day.close - day.open, DAYS[index+1].close - DAYS[index+1].open):
+        if is_swing(day, DAYS[index+1]):
             start     = True
 
             if start_day == None:
@@ -99,7 +109,7 @@ for index, day in enumerate(DAYS):
 
             # If the signs are different, then the candles are different
             # Means it swung back the other direction
-            if is_swing(day.close - day.open, DAYS[index+1].close - DAYS[index+1].open):
+            if is_swing(day, DAYS[index+1]):
                 correct    = correct + 1
                 last_day   = day
                 difference = DAYS[index+1].close - day.close
