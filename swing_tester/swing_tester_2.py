@@ -1,4 +1,5 @@
 import statistics
+from tkinter import N
 import holidays
 from math import copysign, floor
 from csv_reader import get_days
@@ -78,6 +79,11 @@ def get_amount_to_buy(balance, cost):
     else:
         return floor(balance * 0.0005)
 
+# Loops through the daily data - DAYS
+# Checks if the days after n_days goes in the opposite direction
+# If so, count it and add profit
+# If not, don't count it and lose money
+# Returns a dictionary with the results
 def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float):
 
     start_day  = None
@@ -143,10 +149,34 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
 
     return d
 
+# Will test the swing tester a certain number of times to determine the best n_days
+# This will go based on the highest ending balance - eb
+def test_tester_eb(times):
+    print('Start Tester')
+    best_n    = None
+    results   = None
+    for n in range(1, times, 1):
+        r = test_ndays_swing(n, 1000, 400, 0.50)
+
+        if best_n == None and results == None:
+            best_n  = n
+            results = r
+        elif r['End Balance'] > results['End Balance']:
+            best_n  = n 
+            results = r
+
+    d = dict()
+    d['Best N']  = best_n
+    d['Results'] = results
+
+    return d
+
 # --- CODE --- #
 print('\n--- It\'s lights out and away we go! ---')
 
-result = test_ndays_swing(7, 1000, 400, 0.50)
+#result = test_ndays_swing(7, 1000, 400, 0.50)
+
+result = test_tester_eb(30)
 print(result)
 
 print('--- It\'s all over! ---\n')
