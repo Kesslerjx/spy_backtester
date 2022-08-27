@@ -131,18 +131,22 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
     avg_difference = round(statistics.mean(differences),2)
     forecast       = get_forecast(last_day.date, 10, n_days)
 
-    print('Start Date:       ' + start_day.date)
-    print('Start Balance:    ' + str(round(s_balance, 2)))
-    print('Number of Days:   ' + str(n_days))
-    print('Count:            ' + str(count))
-    print('Correct:          ' + str(correct))
-    print('Percentage:       ' + str(percentage) + '%')
-    print('Average $ Change: ' + str(avg_difference))
-    print('Last Date:        ' + last_day.date)
-    print('End Balance:      ' + str(round(balance, 2)))
-    print('Next 10 Dates:')
-    print_forecast(forecast)   
+    d = dict()
+    d['Start Date']    = start_day.date
+    d['Start Balance'] = round(s_balance, 2)
+    d['N Days']        = n_days
+    d['Count']         = count
+    d['Correct']       = correct
+    d['Percentage']    = round(correct/count*100, 2)
+    d['AVG $ Change']  = round(statistics.mean(differences),2)
+    d['Last Date']     = last_day.date
+    d['End Balance']   = round(balance, 2)
+    d['Forecast']      = forecast
+
     print('--- It\'s all over! ---\n')
 
+    return d
+
 # --- CODE --- #
-test_ndays_swing(7, 1000, 400, 0.50)
+result = test_ndays_swing(7, 1000, 400, 0.50)
+print(result)
