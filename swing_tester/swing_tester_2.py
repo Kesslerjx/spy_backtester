@@ -88,8 +88,6 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
     correct    = 0 # How many times its write
     differences = [] # $ value of changes when there is a swing
 
-    print('\n--- It\'s lights out and away we go! ---')
-
     for index, day in enumerate(DAYS):
         
         # Don't run if index+1 is out of range
@@ -143,10 +141,12 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
     d['End Balance']   = round(balance, 2)
     d['Forecast']      = forecast
 
-    print('--- It\'s all over! ---\n')
-
     return d
 
 # --- CODE --- #
+print('\n--- It\'s lights out and away we go! ---')
+
 result = test_ndays_swing(7, 1000, 400, 0.50)
 print(result)
+
+print('--- It\'s all over! ---\n')
