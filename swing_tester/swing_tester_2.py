@@ -120,7 +120,9 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
                     balance    = balance + (abs(difference) * 100 * delta * to_buy)
                     differences.append(abs(difference))
                 else:
-                    loss = (abs(difference) * 100 * delta * to_buy)
+                    difference = DAYS[index+1].close - day.close
+                    to_buy     = get_amount_to_buy(balance, c_cost)
+                    loss       = (abs(difference) * 100 * delta * to_buy)
                     
                     # You can only lose the amount that you paid for the premium
                     # If the max loss is less, then you lose that
@@ -128,7 +130,6 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
                     if loss < c_cost:
                         balance = balance - loss
                     else:
-                        to_buy  = get_amount_to_buy(balance, c_cost)
                         balance = balance - (c_cost * to_buy)
 
     percentage     = round(correct/count*100, 2)
@@ -176,7 +177,7 @@ print('\n--- It\'s lights out and away we go! ---')
 
 #result = test_ndays_swing(7, 1000, 400, 0.50)
 
-result = test_tester_eb(30)
+result = test_tester_eb(60)
 print(result)
 
 print('--- It\'s all over! ---\n')
