@@ -108,20 +108,18 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
                     start_day = day
 
             if index % n_days == 0 and start == True:
-                count = count + 1 # Add count
+                count      = count + 1 # Add count
+                difference = DAYS[index+1].close - day.close
+                to_buy     = get_amount_to_buy(balance, c_cost)
 
                 # If the signs are different, then the candles are different
                 # Means it swung back the other direction
                 if is_swing(day, DAYS[index+1]):
                     correct    = correct + 1
                     last_day   = day
-                    difference = DAYS[index+1].close - day.close
-                    to_buy     = get_amount_to_buy(balance, c_cost)
                     balance    = balance + (abs(difference) * 100 * delta * to_buy)
                     differences.append(abs(difference))
                 else:
-                    difference = DAYS[index+1].close - day.close
-                    to_buy     = get_amount_to_buy(balance, c_cost)
                     loss       = (abs(difference) * 100 * delta * to_buy)
                     
                     # You can only lose the amount that you paid for the premium
@@ -142,8 +140,8 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
     d['N Days']        = n_days
     d['Count']         = count
     d['Correct']       = correct
-    d['Percentage']    = round(correct/count*100, 2)
-    d['AVG $ Change']  = round(statistics.mean(differences),2)
+    d['Percentage']    = percentage
+    d['AVG $ Change']  = avg_difference
     d['Last Date']     = last_day.date
     d['End Balance']   = round(balance, 2)
     d['Forecast']      = forecast
@@ -175,9 +173,9 @@ def test_tester_eb(times):
 # --- CODE --- #
 print('\n--- It\'s lights out and away we go! ---')
 
-#result = test_ndays_swing(7, 1000, 400, 0.50)
+result = test_ndays_swing(7, 1000, 400, 0.50)
 
-result = test_tester_eb(60)
+#result = test_tester_eb(60)
 print(result)
 
 print('--- It\'s all over! ---\n')
