@@ -1,6 +1,6 @@
 import statistics
-from tkinter import N
 import holidays
+import numpy as np
 from math import copysign, floor
 from csv_reader import get_days
 from datetime import datetime, timedelta
@@ -189,12 +189,35 @@ def test_tester_hp(times):
 
     return d
 
+# Looks for the best delta based on the n value
+# Best delta is what returns the highest end balance
+def test_tester_delta(n):
+    best_d    = None
+    results   = None
+
+    for d in np.arange(0.20, 0.90, .01):
+        r = test_ndays_swing(n, 1000, 400, d)
+
+        if best_d == None and results == None:
+            best_d  = d
+            results = r
+        elif r['End Balance'] > results['End Balance']:
+            best_d  = d 
+            results = r
+
+    d = dict()
+    d['Best Delta']  = best_d
+    d['Results'] = results
+
+    return d
+
 # --- CODE --- #
 print('\n--- It\'s lights out and away we go! ---')
 
 #result = test_ndays_swing(7, 1000, 400, 0.50)
 
-result = test_tester_hp(60)
-print(result)
+best_n_days = test_tester_eb(30)['Best N']
+best_delta  = test_tester_delta(best_n_days)
+print(best_delta)
 
 print('--- It\'s all over! ---\n')
