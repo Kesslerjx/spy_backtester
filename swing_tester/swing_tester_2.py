@@ -151,7 +151,6 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
 # Will test the swing tester a certain number of times to determine the best n_days
 # This will go based on the highest ending balance - eb
 def test_tester_eb(times):
-    print('Start Tester')
     best_n    = None
     results   = None
     for n in range(1, times, 1):
@@ -170,12 +169,32 @@ def test_tester_eb(times):
 
     return d
 
+# Another tester but looks for the highest chance
+def test_tester_hp(times):
+    best_n    = None
+    results   = None
+    for n in range(1, times, 1):
+        r = test_ndays_swing(n, 1000, 400, 0.50)
+
+        if best_n == None and results == None:
+            best_n  = n
+            results = r
+        elif r['Percentage'] > results['Percentage']:
+            best_n  = n 
+            results = r
+
+    d = dict()
+    d['Best N']  = best_n
+    d['Results'] = results
+
+    return d
+
 # --- CODE --- #
 print('\n--- It\'s lights out and away we go! ---')
 
-result = test_ndays_swing(7, 1000, 400, 0.50)
+#result = test_ndays_swing(7, 1000, 400, 0.50)
 
-#result = test_tester_eb(60)
+result = test_tester_hp(60)
 print(result)
 
 print('--- It\'s all over! ---\n')
