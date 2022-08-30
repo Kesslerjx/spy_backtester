@@ -83,9 +83,22 @@ def get_amount_to_buy(balance, cost):
 # Breakeven = strike price + option premium
 # Since it's not using actual contracts, it will make the strike price the stock price
 # Stock price should be in the hundreds or whatever it is - $400
-# Contract price should be for 1 share - $4.00
-def get_breakeven(stock_price, contract_price):
-    return stock_price + contract_price
+# Also, strike prices on WeBull usually start at the floor and move down, at the next number up
+# Contract price should be the full price - $400
+def get_breakeven(stock_price, contract_price, trend):
+    return floor(stock_price) + ((contract_price/100) * trend)
+
+def get_trend(close, open):
+    return copysign(1, close-open)
+
+# You can only lose the amount that you paid for the premium
+# If the max loss is less, then you lose that
+# If the max loss is higher, then you lose the premium
+def get_loss(loss, contract_cost, amount):
+    if loss < contract_cost:
+        return loss
+    else:
+        return contract_cost * amount
 
 # Loops through the daily data - DAYS
 # Checks if the days after n_days goes in the opposite direction
@@ -116,27 +129,31 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
                     start_day = day
 
             if index % n_days == 0 and start == True:
-                count      = count + 1 # Add count
-                difference = DAYS[index+1].close - DAYS[index+1].open
-                to_buy     = get_amount_to_buy(balance, c_cost)
+                count         = count + 1 # Add count
+                current_trend = get_trend(day.close, day.open)
+                next_d_trend  = current_trend * -1
+                break_even    = get_breakeven(DAYS[index+1].open, c_cost, next_d_trend)
+                difference    = DAYS[index+1].close - break_even
+                to_buy        = get_amount_to_buy(balance, c_cost)
 
                 # If the signs are different, then the candles are different
                 # Means it swung back the other direction
                 if is_swing(day, DAYS[index+1]):
-                    correct    = correct + 1
-                    last_day   = day
-                    balance    = balance + (abs(difference) * 100 * delta * to_buy)
-                    differences.append(abs(difference))
-                else:
-                    loss       = (abs(difference) * 100 * delta * to_buy)
-                    
-                    # You can only lose the amount that you paid for the premium
-                    # If the max loss is less, then you lose that
-                    # If the max loss is higher, then you lose the premium
-                    if loss < c_cost:
+                    correct  = correct + 1
+                    last_day = day
+                    profit   = (abs(difference) * 100 * delta * to_buy)
+
+                    if difference < 0:
+                        loss    = get_loss(profit, c_cost, to_buy)
                         balance = balance - loss
                     else:
-                        balance = balance - (c_cost * to_buy)
+                        balance = balance + profit
+
+                    differences.append(abs(difference))
+                else:
+                    c_loss  = (abs(difference) * 100 * delta * to_buy) # Calculated loss
+                    a_loss  = get_loss(c_loss, c_cost, to_buy) # Actual loss
+                    balance = balance - a_loss
 
     percentage     = round(correct/count*100, 2)
     avg_difference = round(statistics.mean(differences),2)
@@ -222,7 +239,7 @@ def test_tester_delta(n, s_balance=S_BALANCE_DEFAULT,c_cost=C_COST_DEFAULT):
 # --- CODE --- #
 print('\n--- It\'s lights out and away we go! ---')
 
-swing_test  = test_ndays_swing(7, 1000, 400, 0.50)
+swing_test  = test_ndays_swing(7, 1000, 400, 0.60)
 best_n_days = test_tester_eb(30)['Best N']
 best_delta  = test_tester_delta(best_n_days)
 print(swing_test)
