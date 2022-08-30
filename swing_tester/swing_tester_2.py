@@ -15,15 +15,11 @@ HOLIDAYS = holidays.US()
 # Returns true if a swing
 # Returns false if not
 def is_swing(day, next_day):
-    # If the current day candle is red, then the next candle must be green and close above the current day
-    # If the current day candle is green, then the next candle must be red and close below the current day
-    # If not, then it's not a swing
-    if day.close - day.open < 0 and next_day.close - next_day.open > 0 and next_day.close > day.close:
-        return True
-    elif day.close - day.open > 0 and next_day.close - next_day.open < 0 and next_day.close < day.close:
-        return True
-    else:
-        return False
+
+    day_difference  = day.close - day.open
+    next_difference = next_day.close - next_day.open
+
+    return not(copysign(1, day_difference) == copysign(1, next_difference))
 
 def add_day(date: str, days=1):
     date_as_date = datetime.strptime(date, '%Y-%m-%d')
@@ -195,7 +191,7 @@ def test_tester_delta(n):
     best_d    = None
     results   = None
 
-    for d in np.arange(0.20, 0.90, .01):
+    for d in np.arange(0.20, 0.80, .01):
         r = test_ndays_swing(n, 1000, 400, d)
 
         if best_d == None and results == None:
@@ -215,9 +211,9 @@ def test_tester_delta(n):
 print('\n--- It\'s lights out and away we go! ---')
 
 #result = test_ndays_swing(7, 1000, 400, 0.50)
-
+swing_test  = test_ndays_swing(7, 1000, 400, 0.50)
 best_n_days = test_tester_eb(30)['Best N']
 best_delta  = test_tester_delta(best_n_days)
-print(best_delta)
+print(swing_test)
 
 print('--- It\'s all over! ---\n')
