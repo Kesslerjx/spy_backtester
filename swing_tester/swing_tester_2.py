@@ -239,7 +239,7 @@ def test_tester_delta(n, s_balance=S_BALANCE_DEFAULT,c_cost=C_COST_DEFAULT):
 # --- CODE --- #
 print('\n--- It\'s lights out and away we go! ---')
 
-swing_test  = test_ndays_swing(7, 1000, 400, 0.60)
+swing_test  = test_ndays_swing(7, 1000, 340, 0.60)
 best_n_days = test_tester_eb(30)['Best N']
 best_delta  = test_tester_delta(best_n_days)
 print(swing_test)
