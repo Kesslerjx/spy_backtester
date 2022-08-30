@@ -11,6 +11,10 @@ from datetime import datetime, timedelta
 DAYS     = get_days('./data/spy_daily_since_2021.csv')
 HOLIDAYS = holidays.US()
 
+S_BALANCE_DEFAULT = 1000
+C_COST_DEFAULT    = 400
+DELTA_DEFAULT     = 0.50
+
 # --- FUNCTIONS --- #
 # Returns true if a swing
 # Returns false if not
@@ -146,7 +150,7 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
 
 # Will test the swing tester a certain number of times to determine the best n_days
 # This will go based on the highest ending balance - eb
-def test_tester_eb(times, s_balance=1000,c_cost=400,delta=0.50):
+def test_tester_eb(times, s_balance=S_BALANCE_DEFAULT,c_cost=C_COST_DEFAULT,delta=DELTA_DEFAULT):
     best_n    = None
     results   = None
     for n in range(1, times, 1):
@@ -166,7 +170,7 @@ def test_tester_eb(times, s_balance=1000,c_cost=400,delta=0.50):
     return d
 
 # Another tester but looks for the highest chance
-def test_tester_hp(times, s_balance=1000,c_cost=400,delta=0.50):
+def test_tester_hp(times, s_balance=S_BALANCE_DEFAULT,c_cost=C_COST_DEFAULT,delta=DELTA_DEFAULT):
     best_n    = None
     results   = None
     for n in range(1, times, 1):
@@ -187,7 +191,7 @@ def test_tester_hp(times, s_balance=1000,c_cost=400,delta=0.50):
 
 # Looks for the best delta based on the n value
 # Best delta is what returns the highest end balance
-def test_tester_delta(n, s_balance=1000,c_cost=400):
+def test_tester_delta(n, s_balance=S_BALANCE_DEFAULT,c_cost=C_COST_DEFAULT):
     best_d    = None
     results   = None
 
