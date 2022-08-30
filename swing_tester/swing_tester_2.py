@@ -146,11 +146,11 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
 
 # Will test the swing tester a certain number of times to determine the best n_days
 # This will go based on the highest ending balance - eb
-def test_tester_eb(times):
+def test_tester_eb(times, s_balance=1000,c_cost=400,delta=0.50):
     best_n    = None
     results   = None
     for n in range(1, times, 1):
-        r = test_ndays_swing(n, 1000, 400, 0.50)
+        r = test_ndays_swing(n, s_balance, c_cost, delta)
 
         if best_n == None and results == None:
             best_n  = n
@@ -166,11 +166,11 @@ def test_tester_eb(times):
     return d
 
 # Another tester but looks for the highest chance
-def test_tester_hp(times):
+def test_tester_hp(times, s_balance=1000,c_cost=400,delta=0.50):
     best_n    = None
     results   = None
     for n in range(1, times, 1):
-        r = test_ndays_swing(n, 1000, 400, 0.50)
+        r = test_ndays_swing(n, s_balance, c_cost, delta)
 
         if best_n == None and results == None:
             best_n  = n
@@ -187,12 +187,12 @@ def test_tester_hp(times):
 
 # Looks for the best delta based on the n value
 # Best delta is what returns the highest end balance
-def test_tester_delta(n):
+def test_tester_delta(n, s_balance=1000,c_cost=400):
     best_d    = None
     results   = None
 
-    for d in np.arange(0.20, 0.80, .01):
-        r = test_ndays_swing(n, 1000, 400, d)
+    for d in np.arange(0.20, 0.75, .01):
+        r = test_ndays_swing(n, s_balance, c_cost, d)
 
         if best_d == None and results == None:
             best_d  = d
@@ -210,10 +210,9 @@ def test_tester_delta(n):
 # --- CODE --- #
 print('\n--- It\'s lights out and away we go! ---')
 
-#result = test_ndays_swing(7, 1000, 400, 0.50)
 swing_test  = test_ndays_swing(7, 1000, 400, 0.50)
 best_n_days = test_tester_eb(30)['Best N']
 best_delta  = test_tester_delta(best_n_days)
-print(swing_test)
+print(best_delta)
 
 print('--- It\'s all over! ---\n')
