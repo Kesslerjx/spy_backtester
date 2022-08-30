@@ -131,9 +131,7 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
             if index % n_days == 0 and start == True:
                 count         = count + 1 # Add count
                 current_trend = get_trend(day.close, day.open)
-                next_d_trend  = current_trend * -1
-                break_even    = get_breakeven(DAYS[index+1].open, c_cost, next_d_trend)
-                difference    = DAYS[index+1].close - break_even
+                difference    = DAYS[index+1].close - DAYS[index+1].open
                 to_buy        = get_amount_to_buy(balance, c_cost)
 
                 # If the signs are different, then the candles are different
@@ -142,13 +140,7 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
                     correct  = correct + 1
                     last_day = day
                     profit   = (abs(difference) * 100 * delta * to_buy)
-
-                    if difference < 0:
-                        loss    = get_loss(profit, c_cost, to_buy)
-                        balance = balance - loss
-                    else:
-                        balance = balance + profit
-
+                    balance  = balance + profit
                     differences.append(abs(difference))
                 else:
                     c_loss  = (abs(difference) * 100 * delta * to_buy) # Calculated loss
@@ -239,9 +231,8 @@ def test_tester_delta(n, s_balance=S_BALANCE_DEFAULT,c_cost=C_COST_DEFAULT):
 # --- CODE --- #
 print('\n--- It\'s lights out and away we go! ---')
 
-swing_test  = test_ndays_swing(7, 1000, 340, 0.60)
-best_n_days = test_tester_eb(30)['Best N']
-best_delta  = test_tester_delta(best_n_days)
+swing_test  = test_ndays_swing(7, 1000, 240, 0.40)
+best_n_days = test_tester_eb(30)
 print(swing_test)
 
 print('--- It\'s all over! ---\n')
