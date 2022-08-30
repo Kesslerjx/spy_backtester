@@ -79,6 +79,14 @@ def get_amount_to_buy(balance, cost):
     else:
         return floor(balance * 0.0005)
 
+# Makes an assumption on the breakeven price
+# Breakeven = strike price + option premium
+# Since it's not using actual contracts, it will make the strike price the stock price
+# Stock price should be in the hundreds or whatever it is - $400
+# Contract price should be for 1 share - $4.00
+def get_breakeven(stock_price, contract_price):
+    return stock_price + contract_price
+
 # Loops through the daily data - DAYS
 # Checks if the days after n_days goes in the opposite direction
 # If so, count it and add profit
@@ -109,7 +117,7 @@ def test_ndays_swing(n_days: int, s_balance: float, c_cost: float, delta: float)
 
             if index % n_days == 0 and start == True:
                 count      = count + 1 # Add count
-                difference = DAYS[index+1].close - day.close
+                difference = DAYS[index+1].close - DAYS[index+1].open
                 to_buy     = get_amount_to_buy(balance, c_cost)
 
                 # If the signs are different, then the candles are different
@@ -217,6 +225,6 @@ print('\n--- It\'s lights out and away we go! ---')
 swing_test  = test_ndays_swing(7, 1000, 400, 0.50)
 best_n_days = test_tester_eb(30)['Best N']
 best_delta  = test_tester_delta(best_n_days)
-print(best_delta)
+print(swing_test)
 
 print('--- It\'s all over! ---\n')
