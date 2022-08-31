@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 # --- CONSTANTS --- #
 # Get the days from the CSV file
 # Get holidays for forecasting purposes
-DAYS     = get_days('./data/spy_daily_since_2021.csv')
+DAYS     = get_days('./data/spy_daily_since_2022.csv')
 HOLIDAYS = holidays.US()
 
 S_BALANCE_DEFAULT = 1000
@@ -231,8 +231,7 @@ def test_tester_delta(n, s_balance=S_BALANCE_DEFAULT,c_cost=C_COST_DEFAULT):
 # --- CODE --- #
 print('\n--- It\'s lights out and away we go! ---')
 
-swing_test  = test_ndays_swing(7, 1000, 240, 0.40)
-best_n_days = test_tester_eb(30)
+swing_test  = test_ndays_swing(7, 5000, 400, 0.50)
 print(swing_test)
 
 print('--- It\'s all over! ---\n')
