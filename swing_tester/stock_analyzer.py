@@ -1,6 +1,10 @@
 from math import copysign
 import statistics
 
+def print_list(list):
+    for l in list:
+        print(l)
+
 # Finds the average dollar movement
 # Needs daily data, not intraday
 def get_avg_range(days):
@@ -14,6 +18,7 @@ def get_avg_range(days):
     return round(statistics.mean(changes),2)
 
 # Finds the chance of the stock price going the opposite direction every n_days
+# Goes based off the previous day
 def get_opp_dir_chance(days, n_day):
     count   = 0
     correct = 0
@@ -24,14 +29,12 @@ def get_opp_dir_chance(days, n_day):
     # If signs are different, then it went the opposite direction
     for index, day in enumerate(days):
         if index % n_day == 0:
-            count = count + 1
-            # Avoid out of range error
-            if index <= len(days)-2:
-                current_day = day.close - day.open
-                next_day    = days[index+1].close - days[index+1].open
-                different   = copysign(1, current_day) == copysign(1, next_day)
+            count        = count + 1
+            current_day  = day.close - day.open
+            previous_day = days[index-1].close - days[index-1].open
+            different    = not(copysign(1, current_day) == copysign(1, previous_day))
 
-                if different:
+            if different:
                     correct = correct + 1
     
     return round(correct/count*100, 2)
