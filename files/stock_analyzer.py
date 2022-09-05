@@ -114,3 +114,27 @@ def best_trend_trade_chance(days: list, times: int=30):
     r['results'] = results
 
     return r
+
+# Loops through each day to determine the type of candle
+# If candles are the same it adds to number
+# Once a candle is different, it logs the number and resets to 0
+# At the end if finds the average
+# That average is the average number of days before the stock will close in the opposite direction
+def avg_days_before_opp_dir(days: list):
+    num_list = []
+    number   = 0
+
+    for index, day in enumerate(days):
+        candle = copysign(1, day.close - day.open)
+        if index > 0:
+            p_candle = copysign(1, days[index-1].close - days[index-1].open)
+            if candle == p_candle:
+                number += 1
+            else:
+                num_list.append(number)
+                number = 1
+        else:
+            number += 1
+
+    avg = round(statistics.mean(num_list),2)
+    return avg
