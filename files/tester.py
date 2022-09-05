@@ -3,5 +3,7 @@ from stock_analyzer import print_list, get_avg_range, get_best_nday, map_best_nd
 from stock_trader import trade_ndays, get_best_trade_results
 
 stock_days = get_days('./data/spy_daily_since_2022.csv')
+best_ndays = map_best_ndays(stock_days)
 avg_days   = days_before_opp_dir(stock_days)
+
 print(avg_days)

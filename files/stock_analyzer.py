@@ -1,5 +1,5 @@
 from collections import Counter
-from math import copysign
+from math import copysign, floor
 import statistics
 
 def print_list(list):
@@ -118,12 +118,12 @@ def best_trend_trade_chance(days: list, times: int=30):
 
 # Loops through each day to determine the type of candle
 # If candles are the same it adds to number
-# Once a candle is different, it logs the number and resets to 0
+# Once a candle is different, it logs the number and resets to 1
 # At the end if finds the average
 # That average is the average number of days before the stock will close in the opposite direction
 def days_before_opp_dir(days: list):
     num_list = []
-    number   = 0
+    number   = 1
 
     for index, day in enumerate(days):
         candle = copysign(1, day.close - day.open)
@@ -137,13 +137,18 @@ def days_before_opp_dir(days: list):
         else:
             number += 1
 
-    avg = round(statistics.mean(num_list),2)
-    m_c = Counter(num_list).most_common(1)[0][0]
-    l_c = Counter(num_list).most_common()[-1][0]
+    con = Counter(num_list)
+    avg = statistics.mean(num_list)
+    std = statistics.stdev(num_list)
+    m_c = con.most_common(1)[0][0]
+    l_c = con.most_common()[-1][0]
+    val = con.most_common()
     res = dict()
-    
+
     res['avg'] = avg
+    res['std'] = std
     res['most common'] = m_c
     res['least common'] = l_c
+    res['all values'] = val
 
     return res
