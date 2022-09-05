@@ -1,5 +1,4 @@
-
-# Loops through each day, but makes a trade every n_days 
+import random
 from math import copysign, floor
 from multiprocessing import resource_tracker
 from typing import Dict
@@ -67,3 +66,44 @@ def get_best_trade_results(days: list, start_balance: float, buy_max: Boolean = 
             results = r
 
     return results
+
+def trade_with_chance(days: list, chance_data: list, get_chance):
+    
+    trade_count    = 0
+    trades_correct = 0
+    candle_count   = 1
+
+    for index, day in enumerate(days):
+        # See if there is a trend of the same candles, or reset back to 1
+        candle = copysign(1, day.close - day.open)
+        if index > 0:
+            prev_candle = copysign(1, days[index-1].close - days[index-1].open)
+            if prev_candle == candle:
+                candle_count += 1
+            else:
+                candle_count = 1
+
+        # Only do if the index value is less than len - 1
+        if index < len(days)-1:
+            trade_count += 1
+
+            # Get inverted chance
+            # Assuming this is the chance of the next candle closing in the opposite direction
+            chance = get_chance(chance_data, candle_count)['inverted']
+            guess  = 0
+            r_value = random.random()
+            if r_value <= chance:
+                guess = candle * -1
+            else:
+                guess = candle
+
+            # Get the next candle and see if the guess was correct
+            # If so, add to the correct count
+            next_candle = copysign(1, days[index+1].close - days[index+1].open)
+            if guess == next_candle:
+                trades_correct += 1
+
+    print(trade_count)
+    print(trades_correct)
+    print(trades_correct/trade_count)
+

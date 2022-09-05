@@ -121,7 +121,7 @@ def best_trend_trade_chance(days: list, times: int=30):
 # Once a candle is different, it logs the number and resets to 1
 # At the end if finds the average
 # That average is the average number of days before the stock will close in the opposite direction
-def days_before_opp_dir(days: list):
+def get_counter_data_from(days: list):
     num_list = []
     number   = 1
 
@@ -137,18 +137,26 @@ def days_before_opp_dir(days: list):
         else:
             number += 1
 
-    con = Counter(num_list)
-    avg = statistics.mean(num_list)
-    std = statistics.stdev(num_list)
-    m_c = con.most_common(1)[0][0]
-    l_c = con.most_common()[-1][0]
-    val = con.most_common()
-    res = dict()
+    data = Counter(num_list)
 
-    res['avg'] = avg
-    res['std'] = std
-    res['most common'] = m_c
-    res['least common'] = l_c
-    res['all values'] = val
+    return data
 
-    return res
+# Uses the counter data that is calculated in the days_before_opp_dir function
+def get_chance_from(values: list, value: int):
+
+    total     = 0
+    frequency = 0
+
+    for data in values:
+        total += values[data]
+        if data == value:
+            frequency = values[data]
+
+    chance   = frequency / total
+    inverted = 1 - chance
+    result   = dict()
+
+    result['chance']   = round(chance, 2)
+    result['inverted'] = round(inverted, 2)
+
+    return result
