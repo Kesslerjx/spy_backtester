@@ -73,3 +73,44 @@ def map_best_ndays(days, times=30):
         n_chances.append(d)
 
     return n_chances
+
+# Looks back n_days to determine a trend
+# It will then trade based on that trend
+# Counts all correct trades to determine chance
+def trend_trade_chance_ndays(days: list, n_days: int):
+    
+    count   = 0
+    correct = 0
+
+    for index, day in enumerate(days):
+        if index - n_days >= 0 and index < len(days)-1:
+            count += 1
+            trend = copysign(1, day.close - days[index-n_days].close)
+            guess = copysign(1, days[index+1].close - days[index+1].open) # Next days candle
+            if guess == trend:
+                correct += 1
+    
+    chance      = round(correct/count*100, 2)
+    result      = dict()
+    result['n'] = n_days
+    result['c'] = chance
+
+    return result
+
+# Will try times number of days to find the one with the best chance
+# Returns a dict with the best result, and the result of every day
+def best_trend_trade_chance(days: list, times: int=30):
+    best_result = None
+    results = []
+
+    for n in range(1, times, 1):
+        result = trend_trade_chance_ndays(days, n)
+        results.append(result)
+        if best_result == None or result['c'] > best_result['c']:
+            best_result = result
+    
+    r = dict()
+    r['best']    = best_result
+    r['results'] = results
+
+    return r
