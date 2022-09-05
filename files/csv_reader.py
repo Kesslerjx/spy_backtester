@@ -20,8 +20,8 @@ def get_days_from(path):
 
     return days
 
-def get_eod_data(from_date: str, to_date: str, api_key: str):
-    API_CALL = 'https://eodhistoricaldata.com/api/eod/MCD.US?api_token=' + api_key + '&from=' + from_date + '&to=' + to_date
+def get_eod_data(from_date: str, to_date: str, api_key: str, stock: str='SPY'):
+    API_CALL = 'https://eodhistoricaldata.com/api/eod/' + stock + '.US?api_token=' + api_key + '&from=' + from_date + '&to=' + to_date
     response = requests.get(API_CALL)
     lines    = response.text.splitlines()
     reader   = csv.reader(lines)
