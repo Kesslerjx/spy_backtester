@@ -1,3 +1,4 @@
+from collections import Counter
 from math import copysign
 import statistics
 
@@ -120,7 +121,7 @@ def best_trend_trade_chance(days: list, times: int=30):
 # Once a candle is different, it logs the number and resets to 0
 # At the end if finds the average
 # That average is the average number of days before the stock will close in the opposite direction
-def avg_days_before_opp_dir(days: list):
+def days_before_opp_dir(days: list):
     num_list = []
     number   = 0
 
@@ -137,4 +138,12 @@ def avg_days_before_opp_dir(days: list):
             number += 1
 
     avg = round(statistics.mean(num_list),2)
-    return avg
+    m_c = Counter(num_list).most_common(1)[0][0]
+    l_c = Counter(num_list).most_common()[-1][0]
+    res = dict()
+    
+    res['avg'] = avg
+    res['most common'] = m_c
+    res['least common'] = l_c
+
+    return res
